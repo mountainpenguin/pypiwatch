@@ -1,0 +1,6 @@
+*.py[cod]
+*.swp
+
+logs/*.log
+proc/*.pid
+data/*.db
