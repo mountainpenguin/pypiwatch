@@ -26,6 +26,10 @@
             <div class="span9 hero-unit">
                 <h2>Now Playing:</h2>
                 <div id="now-playing-title">{{ current.filename }}
+                <div class="btn-group">
+                    <button id="pause-playing" class="btn btn-warning btn-large">Pause</button>
+                    <button id="stop-playing" class="btn btn-error btn-large">Stop</button>
+                </div>
             </div>
             {% end %}
         </div>

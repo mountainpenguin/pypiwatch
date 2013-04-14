@@ -98,6 +98,8 @@ class ajax(BaseHandler):
         self.commands = {
             "playable": self._playable,
             "play": self._play,
+            "pause": self._pause,
+            "stop": self._stop,
         }
 
     def get(self):
@@ -114,9 +116,7 @@ class ajax(BaseHandler):
         self.write(response)
 
     def _play(self, **kwargs):
-        if self.application.current:
-            self._pause()
-            return
+        # check for current and stop, then play this one
         itemID = kwargs["itemID"][0].decode("utf8")
         itemindex = int(kwargs["itemindex"][0])
         item = self.application._DB.getItemByID(itemID)
@@ -129,6 +129,14 @@ class ajax(BaseHandler):
         time.sleep(1)
         self.application.current.fullscreen = True
 
-    def _pause(self):
-        self.application.current.pause()
+    def _pause(self, **kwargs):
+        if self.application.current:
+            self.application.current.pause()
+
+    def _stop(self, **kwargs):
+        if self.application.current:
+            self.application.current.pause()
+            self.application.current.quit()
+            self.application.current = None
+
         

@@ -33,7 +33,26 @@ $(document).ready(function(){
             }
         });
     });
-
+    $("#pause-playing").click( function (evt) {
+        $.ajax({
+            url: "/ajax",
+            data: {
+                command: "pause"
+            },
+            success: function(data) {
+            }
+        });
+    });
+    $("#stop-playing").click( function (evt) {
+        $.ajax({
+            url: "/ajax",
+            data: {
+                command: "stop"
+            },
+            success: function(data) {
+            }
+        });
+    });
     
 });
 
