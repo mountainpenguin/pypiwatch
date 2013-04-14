@@ -1,0 +1,65 @@
+{% extends base.html %}
+{% block title %} Index {% end %}
+
+{% block body %}
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container-fluid">
+                <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="brand" href="/">pyPiTV</a>
+                <div class="nav-collapse collapse">
+                    <ul class="nav">
+                        <li{% if page=="home" %} class="active"{% end %}><a href="/">Home</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row-fluid">
+            {% if current %}
+            <div class="span9 hero-unit">
+                <h2>Now Playing:</h2>
+                <div id="now-playing-title">{{ current.filename }}
+            </div>
+            {% end %}
+        </div>
+        {% for char, char_items in items %}
+        <h3 class="alphabetical"><a name="{{ char }}">{{ char }}</a></h3>
+            {% for item in char_items %}
+                <a class="row-fluid watch-item" href="#" id="watch-item-{{ item.ID }}">
+                    <span class="item-type item-type-{{ item.typeID }}"></span>
+                    <span class="item-title">{{ item.title }}</span>
+                    {% if item.typeID == 1 %}
+                        <span class="item-tv-season">S{{ item.mediainfo.season }}E{{ item.mediainfo.episode }}</span>
+                        <span class="item-quality item-quality-{{ item.qualityID }}">{{ item.quality_str }}</span>
+                    {% elif item.typeID == 2 %}
+                        <span class="item-film-year">{{ item.mediainfo.year }}</span>
+                        <span class="item-quality item-quality-{{ item.qualityID }}">{{ item.quality_str }}</span>
+                    {% end if %}
+                </a>
+            {% end for %}
+        {% end for %}
+    </div>
+
+    <div id="watch-item-modal-template" class="modal hide fade">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3>Select file to watch</h3>
+        </div>
+        <div class="modal-body">
+            <div id="watch-item-watchable-template" class="watch-item-select">
+                <span class="dirname"></span><a class="watch-this-item" href="#"><span class="basename"></span></a>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        </div>
+    </div>
+{% end %}
+{% block js %}main.js{% end block %}

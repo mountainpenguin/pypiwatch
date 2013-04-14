@@ -1,0 +1,104 @@
+body {
+    padding-bottom: 40px;
+}
+.sidebar-nav {
+    padding: 9px 0;
+}
+.nav-addition {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.navbar {
+    margin-left: -20px;
+    margin-right: -20px;
+}
+a:hover {
+    text-decoration: none !important;
+}
+ul.item-page-tree {
+    font-size: 11px;
+    font-family: Verdana, sans-serif;
+}
+h3.alphabetical {
+    border-bottom: 1px solid black;
+}
+
+.item-type {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    vertical-align: top;
+    background: url(/img/fugue-icons/question-white.png) center center no-repeat;
+}
+.item-type.item-type-1, .item-type.item-type-2 {
+    background: url(/img/fugue-icons/film.png) center center no-repeat;
+}
+
+/* unused stuff */
+li.item-page-tree {
+    list-style: none;
+    padding: 0px;
+    padding-left: 0px;
+    margin: 0px;
+    white-space: nowrap;
+}
+li.item-page-tree span, li.item-page-tree a {
+    padding-left: 20px;
+}
+.item-page-directory-collapsed {
+    background: url(/stash2/img/fugue-icons/folder.png) left top no-repeat;
+}
+.item-page-directory-opened {
+    background: url(/stash2/img/fugue-icons/folder-open.png) left top no-repeat;
+}
+.item-page-file {
+    background: url(/stash2/img/fugue-icons/document.png) left top no-repeat;
+}
+li.item-page-tree.file-mime-video-webm,
+li.item-page-tree.file-mime-video-x-msvideo,
+li.item-page-tree.file-mime-video-x-matroska,
+li.item-page-tree.file-mime-video-mp4,
+li.item-page-tree.file-mime-application-octet-stream.file-ext-mkv {
+    background: url(/stash2/img/fugue-icons/film.png) left top no-repeat;
+}
+li.item-page-tree.file-mime-application-pdf {
+    background: url(/stash2/img/fugue-icons/document-pdf.png) left top no-repeat;
+}
+li.item-page-tree.file-mime-text-plain.file-ext-srt {
+    background: url(/stash2/img/fugue-icons/document-sub.png) left top no-repeat;
+}
+li.item-page-tree.file-mime-text-plain {
+    background: url(/stash2/img/fugue-icons/document-text.png) left top no-repeat;
+}
+li.item-page-tree.file-mime-application-octet-stream.file-ext-mobi, 
+li.item-page-tree.file-mime-application-epub-zip {
+    background: url(/stash2/img/fugue-icons/book.png) left top no-repeat;
+}
+li.item-page-tree.file-mime-application-x-rar {
+    background: url(/stash2/img/fugue-icons/rar.png) left top no-repeat;
+}
+li.item-page-tree.file-mime-application-zip {
+    background: url(/stash2/img/fugue-icons/folder-zipper.png) left top no-repeat;
+}
+li.item-page-tree.file-mime-audio-ogg,
+li.item-page-tree.file-mime-audio-flac,
+li.item-page-tree.file-mime-audio-x-flac,
+li.item-page-tree.file-mime-audio-mpeg {
+    background: url(/stash2/img/fugue-icons/music-beam.png) left top no-repeat;
+}
+li.item-page-tree.file-mime-image-png,
+li.item-page-tree.file-mime-image-jpeg,
+li.item-page-tree.file-mime-image-gif {
+    background: url(/stash2/img/fugue-icons/picture.png) left top no-repeat;
+}
+li.item-page-tree.file-mime-application-octet-stream.file-ext-dmg {
+    background: url(/stash2/img/fugue-icons/mac-os.png) left top no-repeat;
+}
+li.item-page-tree.file-mime-application-octet-stream.file-ext-exe,
+li.item-page-tree.file-mime-application-exe,
+li.item-page-tree.file-mime-application-x-exe,
+li.item-page-tree.file-mime-application-x-msdos-program,
+li.item-page-tree.file-mime-application-msdos-windows {
+    background: url(/stash2/img/fugue-icons/windows.png) left top no-repeat;
+}
