@@ -35,6 +35,18 @@ h3.alphabetical {
     background: url(/img/fugue-icons/film.png) center center no-repeat;
 }
 
+.hero-unit {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+#progress-bar {
+    margin-top: 20px;
+}
+
+#progress {
+    font-size: 30px;
+}
+
 /* unused stuff */
 li.item-page-tree {
     list-style: none;

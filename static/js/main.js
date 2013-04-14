@@ -40,6 +40,11 @@ $(document).ready(function(){
                 command: "pause"
             },
             success: function(data) {
+                if (data.status == "playing") {
+                    $("#pause-playing").html("Pause").toggleClass("btn-warning btn-success");
+                } else {
+                    $("#pause-playing").html("Play").toggleClass("btn-warning btn-success");
+                }
             }
         });
     });
@@ -50,11 +55,39 @@ $(document).ready(function(){
                 command: "stop"
             },
             success: function(data) {
+                location.reload();
             }
         });
     });
-    
+    $("#seek-test").click( function (evt) {
+        $.ajax({
+            url: "/ajax",
+            data: {
+                command: "seek"
+            },
+            success: function(data) {
+                location.reload();
+            }
+        });
+    });
+     
+    window.setInterval(progressFunc, 2000);
 });
+
+function progressFunc() {
+    $.ajax({
+        url: "/ajax",
+        data: {
+            command: "progress"
+        },
+        success: function (data) {
+            if (data.progress) {
+                $("#progress-current").html(data.progress);
+                $("#progress-bar .bar").css("width", data.percentage + "%");
+            }
+        }
+    });
+}
 
 function watchFunc(evt) {
     evt.preventDefault();

@@ -23,12 +23,26 @@
     <div class="container-fluid">
         <div class="row-fluid">
             {% if current %}
-            <div class="span9 hero-unit">
+            <div class="span9 hero-unit text-center">
                 <h2>Now Playing:</h2>
-                <div id="now-playing-title">{{ current.filename }}
+                <div id="now-playing-title">{{ current.item.title }}</div>
                 <div class="btn-group">
+                    {% if current.status == "playing" %}
                     <button id="pause-playing" class="btn btn-warning btn-large">Pause</button>
-                    <button id="stop-playing" class="btn btn-error btn-large">Stop</button>
+                    {% else %}
+                    <button id="pause-playing" class="btn btn-success btn-large">Play</button>
+                    {% end if %}
+                    <button id="stop-playing" class="btn btn-danger btn-large">Stop</button>
+
+                    <button id="seek-test" class="btn btn-large">Test</button>
+                </div>
+                <div id="progress-bar" class="progress progress-striped">
+                    <div class="bar" style="width: {{ current.get_perc() }}%"></div>
+                </div>
+                <div id="progress">
+                    <span id="progress-current">{{ current.get_timepos() }}</span>
+                    <span>/</span>
+                    <span id="progress-length">{{ current.length }}</span>
                 </div>
             </div>
             {% end %}

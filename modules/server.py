@@ -57,6 +57,7 @@ class Main(object):
         application._templ = tornado.template.Loader("templates")
         application._DB = db.Database(root=application._root)
         application.current = None
+        application.status = None
         while True:
             dirname = os.path.join("/tmp", "pyPi" + utils.randomstring()) 
             try:
@@ -91,7 +92,9 @@ class webroot(BaseHandler):
     def get(self):
         items = self.application._DB.getItems()
         items_alphabetical = utils.itemsAlphabetical(items)
-        self.render("index", current=self.application.current, items=items_alphabetical) 
+        self.render("index", 
+                    current=self.application.current, 
+                    items=items_alphabetical) 
 
 class ajax(BaseHandler):
     def initialize(self):
@@ -100,6 +103,8 @@ class ajax(BaseHandler):
             "play": self._play,
             "pause": self._pause,
             "stop": self._stop,
+            "progress": self._progress,
+            "seek": self._seek,
         }
 
     def get(self):
@@ -124,19 +129,50 @@ class ajax(BaseHandler):
 
         player = mplayer.Player()
         player.loadfile(pathtofile)
-        self.application.current = mplayer.Player()
-        self.application.current.loadfile(pathtofile)
+        self.application.current = Current(item, player)
+        self.application.current.player.loadfile(pathtofile)
         time.sleep(1)
-        self.application.current.fullscreen = True
+        #self.application.current.player.fullscreen = True
 
     def _pause(self, **kwargs):
         if self.application.current:
-            self.application.current.pause()
+            self.application.current.player.pause()
+            if self.application.current.status == "playing":
+                self.application.current.status = "paused"
+            else:
+                self.application.current.status = "playing"
+            self.write({"status": self.application.current.status})
 
     def _stop(self, **kwargs):
         if self.application.current:
-            self.application.current.pause()
-            self.application.current.quit()
+            self.application.current.player.quit()
             self.application.current = None
 
-        
+    def _progress(self, **kwargs):
+        if self.application.current:
+            self.write({"progress": self.application.current.get_timepos(), "percentage": self.application.current.get_perc()})
+        else:
+            self.write({"progress": None})
+
+    def _seek(self, **kwargs):
+        if self.application.current:
+            self.application.current.player.time_pos = self.application.current.player.length - 3
+
+class Current(object):
+    def __init__(self, item, player):
+        self.item = item
+        self.player = player
+        self.status = "playing"
+        self.length = utils.secondstohumanstamp(player.length)
+
+    def get_timepos(self):
+        if self.player.time_pos:
+            return utils.secondstohumanstamp(self.player.time_pos)
+        else:
+            return self.length
+
+    def get_perc(self):
+        if self.player.time_pos:
+            return int(100*self.player.time_pos / self.player.length)
+        else:
+            return 100

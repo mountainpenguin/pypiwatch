@@ -188,6 +188,14 @@ def _plural(val):
     else:
         return "s"
 
+def secondstohumanstamp(seconds):
+    hours = int(seconds / (60*60))
+    seconds -= hours*60*60
+    minutes = int(seconds / 60)
+    seconds -= minutes*60
+    seconds = int(seconds)
+    return "{0:02d}:{1:02d}:{2:02d}".format(hours, minutes, seconds)
+
 def _secondstohuman(seconds):
     human = ""
     if seconds > 60*60:
@@ -349,3 +357,4 @@ def itemsAlphabetical(items):
             else:
                 items_alpha += [[firstchar, [i]]]
     return items_alpha
+
