@@ -53,9 +53,9 @@ class Main(object):
         ], **settings)
         self._PID = os.getpid()
         #application._root = os.path.expanduser("~/torrents/downloading")
-        application._root = os.path.expanduser("~/Unwatched")
+        self.root = application._root = os.path.expanduser("~/Unwatched")
         application._templ = tornado.template.Loader("templates")
-        application._DB = db.Database(root=application._root)
+        self.DB = application._DB = db.Database(root=application._root)
         application.current = None
         application.status = None
         while True:
@@ -71,6 +71,8 @@ class Main(object):
         http_server = tornado.httpserver.HTTPServer(application, xheaders=True)
         http_server.listen(11111)
         self.instance = tornado.ioloop.IOLoop.instance()
+        cb = tornado.ioloop.PeriodicCallback(self.DB.scan, 60000, self.instance)
+        cb.start()
         self.instance.start()
 
 class BaseHandler(tornado.web.RequestHandler):

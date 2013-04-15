@@ -2,6 +2,7 @@
 
 import sqlite3
 import os
+import logging
 
 from modules import utils
 
@@ -31,18 +32,28 @@ class Database(object):
                 typeID INTEGER,
                 title TEXT,
                 qualityID INTEGER,
-                added DATETIME DEFAULT CURRENT_TIMESTAMP
+                added DATETIME DEFAULT CURRENT_TIMESTAMP,
+                mtime REAL
             )
         """)
         self.conn.commit()
         self.indexItems()
 
-    def insertItem(self, path, typeID, title, qualityID):
+    def removeItem(self, ID):
+        logging.info("Removing item: {0}".format(ID))
+        self.cursor.execute("""
+            DELETE FROM items
+            WHERE id=?
+        """, (ID, ))
+        self.conn.commit()
+
+    def insertItem(self, path, typeID, title, qualityID, mtime):
+        logging.info("Inserting item: {0}".format(path))
         ins = self.cursor.execute("""
             INSERT INTO items
-            (path, typeID, title, qualityID)
-            VALUES (?, ?, ?, ?)
-        """, (path, typeID, title, qualityID))
+            (path, typeID, title, qualityID, mtime)
+            VALUES (?, ?, ?, ?, ?)
+        """, (path, typeID, title, qualityID, mtime))
         self.conn.commit()
         return self.getItemByID(ins.lastrowid)
 
@@ -58,10 +69,14 @@ class Database(object):
     def getItems(self):
         query = self.cursor.execute("""
             SELECT * FROM items
-            ORDER BY added DESC
-            LIMIT 50
         """)
-        return [Item(raw=x, root=self.root) for x in query.fetchall()]
+        items = [] 
+        for pot in query.fetchall():
+            try:
+                items.append(Item(raw=pot, root=self.root))
+            except OSError:
+                pass
+        return items
 
     def getItemByPath(self, path):
         query = self.cursor.execute("""
@@ -72,14 +87,29 @@ class Database(object):
         if result:
             return Item(raw=result, root=self.root)
 
-    def indexItems(self):
-        files = os.listdir(self.root) 
+    def scan(self):
+        items = self.cursor.execute("""
+            SELECT id, mtime, path FROM items
+        """).fetchall()
+        lastmtime = max(items, key=lambda x: x[1])[1]
+        for ID, mtime, path in items:
+            if not os.path.exists(path):
+                self.removeItem(ID)
+        files = os.listdir(self.root)
+        chk = lambda x: (os.stat(os.path.join(self.root, x)).st_mtime > lastmtime)
+        newfiles = filter(chk, files) # = generator
+        self.indexItems(files=newfiles) 
+
+    def indexItems(self, files=None):
+        if not files:
+            files = os.listdir(self.root) 
         for fn in files:
             path = os.path.join(self.root, fn)
             check = self.getItemByPath(path)
             if check:
                 continue
 
+            mtime = os.stat(path).st_mtime
             result = utils.parseFilePath(fn)
             if result.isTv:
                 if result.hd and result.hd == "720p":
@@ -88,7 +118,7 @@ class Database(object):
                     qualityID = 3
                 else:
                     qualityID = 1
-                self.insertItem(path, 1, result.title.replace(".", " "), qualityID) 
+                self.insertItem(path, 1, result.title.replace(".", " "), qualityID, mtime) 
             elif result.isFilm:
                 if result.hd and result.hd == "720p":
                     qualityID = 2
@@ -96,11 +126,11 @@ class Database(object):
                     qualityID = 3
                 else:
                     qualityID = 1
-                self.insertItem(path, 2, result.title.replace(".", " "), qualityID)
+                self.insertItem(path, 2, result.title.replace(".", " "), qualityID, mtime)
             elif result.isEbook:
-                self.insertItem(path, 3, result.title.replace(".", " "), 1)
+                self.insertItem(path, 3, result.title.replace(".", " "), 1, mtime)
             else:
-                self.insertItem(path, 0, fn, 0)
+                self.insertItem(path, 0, fn, 0, mtime)
         
 def convertTypeID(typeID):
     types = {
@@ -132,7 +162,7 @@ def convertQualityID(qualityID):
         return "unknown"
 
 class Item(object):
-    def __init__(self, ID=None, path=None, typeID=None, title=None, qualityID=None, added=None, raw=None, root=None):
+    def __init__(self, ID=None, path=None, typeID=None, title=None, qualityID=None, added=None, mtime=None, raw=None, root=None):
         if raw:
             self.ID          = raw[0]
             path             = raw[1]
@@ -142,6 +172,7 @@ class Item(object):
             self.qualityID   = raw[4]
             self.quality_str = convertQualityID(self.qualityID)
             self.added       = raw[5]
+            self.mtime       = raw[6]
         else:
             self.ID          = ID
             path             = path
@@ -151,6 +182,7 @@ class Item(object):
             self.qualityID   = qualityID
             self.quality_str = convertQualityID(self.qualityID)
             self.added       = added
+            self.mtime       = mtime
         self.size = utils.getSize(path) 
 
         self.path = path.replace(root, "")
