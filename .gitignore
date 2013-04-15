@@ -1,6 +1,6 @@
 *.py[cod]
 *.swp
-
+modules/__pycache__
 logs/*.log
 proc/*.pid
 data/*.db

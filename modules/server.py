@@ -132,7 +132,7 @@ class ajax(BaseHandler):
         self.application.current = Current(item, player)
         self.application.current.player.loadfile(pathtofile)
         time.sleep(1)
-        #self.application.current.player.fullscreen = True
+        self.application.current.player.fullscreen = True
 
     def _pause(self, **kwargs):
         if self.application.current:
@@ -156,7 +156,12 @@ class ajax(BaseHandler):
 
     def _seek(self, **kwargs):
         if self.application.current:
-            self.application.current.player.time_pos = self.application.current.player.length - 3
+            new_pos = float(kwargs["seconds"][0])
+            self.application.current.player.time_pos = new_pos
+            self.write({
+                "progress": self.application.current.get_timepos(), 
+                "percentage": self.application.current.get_perc(),
+            })
 
 class Current(object):
     def __init__(self, item, player):

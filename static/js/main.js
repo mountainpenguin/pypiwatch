@@ -1,4 +1,8 @@
+var progressBarMouseDown = false;
+var totalSeconds;
+
 $(document).ready(function(){
+    totalSeconds = parseInt($("#progress-length").data("seconds"));
     $(".watch-item").click( function (evt) {
         evt.preventDefault();
         var itemID = $(this).attr("id").split("watch-item-")[1];
@@ -59,34 +63,62 @@ $(document).ready(function(){
             }
         });
     });
-    $("#seek-test").click( function (evt) {
-        $.ajax({
-            url: "/ajax",
-            data: {
-                command: "seek"
-            },
-            success: function(data) {
-                location.reload();
-            }
-        });
-    });
-     
+    $("#progress-slider").slider()
+                         .on("slideStart", slideStart)
+                         .on("slide", slideUpdate)
+                         .on("slideStop", slideStop); 
+
+    progressFunc();
     window.setInterval(progressFunc, 2000);
 });
 
-function progressFunc() {
+function slideStart(evt) {
+    progressBarMouseDown = true;
+    $(".slider-selection").addClass("seeking");
+    $("#progress-current").addClass("seeking");
+}
+
+function slideUpdate(evt) {
+    var percentage = evt.value;
+    $("#progress-current").html(
+        secondsToHumanStamp(calculateSeconds(percentage))
+    );
+}
+
+function slideStop(evt) {
+    progressBarMouseDown = false;
+    $(".slider-selection").removeClass("seeking");
+    $("#progress-current").removeClass("seeking");
+    var percentage = evt.value;
     $.ajax({
         url: "/ajax",
         data: {
-            command: "progress"
+            command: "seek",
+            seconds: calculateSeconds(percentage)
         },
         success: function (data) {
-            if (data.progress) {
-                $("#progress-current").html(data.progress);
-                $("#progress-bar .bar").css("width", data.percentage + "%");
-            }
+            $("#progress-current").html(secondsToHumanStamp(calculateSeconds(percentage)));
+            $("#progress-slider").slider("setValue", percentage);
         }
     });
+}
+
+function progressFunc() {
+    if (progressBarMouseDown) {
+    } else {
+        $.ajax({
+            url: "/ajax",
+            data: {
+                command: "progress"
+            },
+            success: function (data) {
+                if (data.progress) {
+                    $("#progress-current").html(data.progress);
+                    $("#progress-slider").slider("setValue", data.percentage);
+                }
+            }
+        });
+    }
 }
 
 function watchFunc(evt) {
@@ -102,4 +134,36 @@ function watchFunc(evt) {
             location.reload();
         }
     });
+}
+
+function calculateSeconds(percentage) {
+    var perc = parseInt(percentage);
+    return totalSeconds * perc / 100;
+}
+
+function secondsToHumanStamp(seconds) {
+    var hours = parseInt(seconds / (60*60));
+    seconds -= hours*60*60;
+    var minutes = parseInt(seconds / 60);
+    seconds -= minutes*60;
+    seconds = parseInt(seconds).toString();
+    var fmt = "";
+    hours = hours.toString();
+    minutes = minutes.toString();
+    if (hours.length == 1) {
+        fmt += "0" + hours + ":";
+    } else {
+        fmt += hours + ":";
+    }
+    if (minutes.length == 1) {
+        fmt += "0" + minutes + ":";
+    } else {
+        fmt += minutes + ":";
+    }
+    if (seconds.length == 1) {
+        fmt += "0" + seconds;
+    } else {
+        fmt += seconds;
+    }
+    return fmt;
 }

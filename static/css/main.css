@@ -38,6 +38,12 @@ h3.alphabetical {
 .hero-unit {
     padding-left: 10px;
     padding-right: 10px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 #progress-bar {
     margin-top: 20px;
@@ -45,6 +51,19 @@ h3.alphabetical {
 
 #progress {
     font-size: 30px;
+}
+
+.slider, #progress-slider {
+    width: 100% !important;
+}
+.slider-selection {
+    background: #149bdf;
+}
+.slider-selection.seeking {
+    background-color: #DF7E14;
+}
+#progress-current.seeking {
+    color: #DF7E14;
 }
 
 /* unused stuff */

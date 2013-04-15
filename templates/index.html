@@ -33,16 +33,21 @@
                     <button id="pause-playing" class="btn btn-success btn-large">Play</button>
                     {% end if %}
                     <button id="stop-playing" class="btn btn-danger btn-large">Stop</button>
-
-                    <button id="seek-test" class="btn btn-large">Test</button>
                 </div>
-                <div id="progress-bar" class="progress progress-striped">
-                    <div class="bar" style="width: {{ current.get_perc() }}%"></div>
+                <div id="progress-bar">
+                    <input type="text" 
+                           id="progress-slider"
+                           value="{{ current.get_perc() }}" 
+                           data-slider-min="0" 
+                           data-slider-max="100" 
+                           data-slider-step="1" 
+                           data-slider-value="{{ current.get_perc() }}" 
+                           data-slider-handle="square">
                 </div>
                 <div id="progress">
                     <span id="progress-current">{{ current.get_timepos() }}</span>
                     <span>/</span>
-                    <span id="progress-length">{{ current.length }}</span>
+                    <span data-seconds="{{ current.player.length }}" id="progress-length">{{ current.length }}</span>
                 </div>
             </div>
             {% end %}
