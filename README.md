@@ -3,4 +3,5 @@
 * tornado     (https://github.com/facebook/tornado)
 * python 2.7
 * pexpect     (pyomxplayer dependency)
+* filemagic   (https://pypi.python.org/pypi/filemagic/)
 
