@@ -23,7 +23,7 @@ import tornado.template
 
 from modules import utils
 from modules import db
-from modules import pyomxplayer
+from modules.pyomxplayer import pyomxplayer
 
 class Main(object):
     def __init__(self):
@@ -165,7 +165,7 @@ class Current(object):
         self.item = item
         self.player = player
         self.status = "playing"
-        self.length = 200
+        self.length.player = self.length = 200
         #self.length = utils.secondstohumanstamp(player.length)
 
     def get_timepos(self):
