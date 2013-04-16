@@ -169,12 +169,12 @@ class Current(object):
 
     def get_timepos(self):
         if self.player.position:
-            return utils.secondstohumanstamp(self.player.position / 1000.0)
+            return utils.secondstohumanstamp(self.player.position / 1000**2)
         else:
             return self.length
 
     def get_perc(self):
         if self.player.position:
-            return int(100*self.player.position / self.item.length)
+            return int(100*self.get_timepos() / self.item.length)
         else:
             return 100
