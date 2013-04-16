@@ -362,8 +362,11 @@ def itemsAlphabetical(items):
  
 def getLength(path):
     mediainfo = pymediainfo.MediaInfo.parse(path)
-    try:
-        length = mediainfo.tracks[0].duration / 1000.0
-    except (IndexError, TypeError):
-        length = -1
-    return length
+    for i in range(5):
+        try:
+            length = mediainfo.tracks[0].duration / 1000.0
+        except (IndexError, TypeError):
+            time.sleep(1)
+        else:
+            return length
+    return -1
