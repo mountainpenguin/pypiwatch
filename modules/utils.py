@@ -11,6 +11,7 @@ import os
 import magic
 import random
 import string
+import pymediainfo
 
 SECRET1 = "dzb9^oCl&ObUK3xx.nkDf]n+3k=)R*cl:8!Nd0O.".encode("utf8")
 SECRET2 = "eo`ctiEZZ7A?2J^:v@7/>S%wvr<qbd<[U&!+ii".encode("utf8")
@@ -358,4 +359,11 @@ def itemsAlphabetical(items):
             else:
                 items_alpha += [[firstchar, [i]]]
     return items_alpha
-
+ 
+def getLength(path):
+    mediainfo = pymediainfo.MediaInfo.parse(path)
+    try:
+        length = mediainfo.tracks[0].duration / 1000.0
+    except TypeError:
+        length = -1
+    return length

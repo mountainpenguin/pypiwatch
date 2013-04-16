@@ -33,7 +33,8 @@ class Database(object):
                 title TEXT,
                 qualityID INTEGER,
                 added DATETIME DEFAULT CURRENT_TIMESTAMP,
-                mtime REAL
+                mtime REAL,
+                length REAL
             )
         """)
         self.conn.commit()
@@ -47,13 +48,13 @@ class Database(object):
         """, (ID, ))
         self.conn.commit()
 
-    def insertItem(self, path, typeID, title, qualityID, mtime):
+    def insertItem(self, path, typeID, title, qualityID, mtime, length):
         logging.info("Inserting item: {0}".format(path))
         ins = self.cursor.execute("""
             INSERT INTO items
-            (path, typeID, title, qualityID, mtime)
-            VALUES (?, ?, ?, ?, ?)
-        """, (path, typeID, title, qualityID, mtime))
+            (path, typeID, title, qualityID, mtime, length)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (path, typeID, title, qualityID, mtime, length))
         self.conn.commit()
         return self.getItemByID(ins.lastrowid)
 
@@ -110,6 +111,7 @@ class Database(object):
                 continue
 
             mtime = os.stat(path).st_mtime
+            length = utils.getLength(fn)
             result = utils.parseFilePath(fn)
             if result.isTv:
                 if result.hd and result.hd == "720p":
@@ -118,7 +120,7 @@ class Database(object):
                     qualityID = 3
                 else:
                     qualityID = 1
-                self.insertItem(path, 1, result.title.replace(".", " "), qualityID, mtime) 
+                self.insertItem(path, 1, result.title.replace(".", " "), qualityID, mtime, length) 
             elif result.isFilm:
                 if result.hd and result.hd == "720p":
                     qualityID = 2
@@ -126,11 +128,11 @@ class Database(object):
                     qualityID = 3
                 else:
                     qualityID = 1
-                self.insertItem(path, 2, result.title.replace(".", " "), qualityID, mtime)
+                self.insertItem(path, 2, result.title.replace(".", " "), qualityID, mtime, length)
             elif result.isEbook:
-                self.insertItem(path, 3, result.title.replace(".", " "), 1, mtime)
+                self.insertItem(path, 3, result.title.replace(".", " "), 1, mtime, length)
             else:
-                self.insertItem(path, 0, fn, 0, mtime)
+                self.insertItem(path, 0, fn, 0, mtime, length)
         
 def convertTypeID(typeID):
     types = {
@@ -162,7 +164,7 @@ def convertQualityID(qualityID):
         return "unknown"
 
 class Item(object):
-    def __init__(self, ID=None, path=None, typeID=None, title=None, qualityID=None, added=None, mtime=None, raw=None, root=None):
+    def __init__(self, ID=None, path=None, typeID=None, title=None, qualityID=None, added=None, mtime=None, length=None, raw=None, root=None):
         if raw:
             self.ID          = raw[0]
             path             = raw[1]
@@ -173,6 +175,7 @@ class Item(object):
             self.quality_str = convertQualityID(self.qualityID)
             self.added       = raw[5]
             self.mtime       = raw[6]
+            self.length      = raw[7]
         else:
             self.ID          = ID
             path             = path
@@ -183,13 +186,14 @@ class Item(object):
             self.quality_str = convertQualityID(self.qualityID)
             self.added       = added
             self.mtime       = mtime
+            self.length      = length
+
         self.size = utils.getSize(path) 
-
         self.path = path.replace(root, "")
-
         self.files = utils.identifyFiles(path)
         self.playable = utils.identifyPlayable(self.files)
         self.filetree = utils.filetree(self.files, toplevel=True)
         self.mediainfo = utils.parseFilePath(self.path)
+
     def __repr__(self):
         return "<Item - ID: {ID}, title: {title}, type: {type_str}, quality: {quality_str}".format(**self.__dict__)
