@@ -364,6 +364,6 @@ def getLength(path):
     mediainfo = pymediainfo.MediaInfo.parse(path)
     try:
         length = mediainfo.tracks[0].duration / 1000.0
-    except TypeError:
+    except (IndexError, TypeError):
         length = -1
     return length
