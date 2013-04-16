@@ -169,7 +169,7 @@ class Current(object):
 
     def get_timepos(self):
         if self.player.position:
-            return utils.secondstohumanstamp(self.player.position)
+            return utils.secondstohumanstamp(self.player.position / 1000.0)
         else:
             return self.length
 
