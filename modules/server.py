@@ -14,7 +14,6 @@ import io
 import tarfile
 import zipfile
 import threading
-import mplayer
 
 import tornado.ioloop
 import tornado.web
@@ -24,6 +23,7 @@ import tornado.template
 
 from modules import utils
 from modules import db
+from modules import pyomxplayer
 
 class Main(object):
     def __init__(self):
@@ -129,16 +129,11 @@ class ajax(BaseHandler):
         item = self.application._DB.getItemByID(itemID)
         pathtofile = os.path.join(self.application._root, item.playable[itemindex])
 
-        player = mplayer.Player()
-        player.loadfile(pathtofile)
-        self.application.current = Current(item, player)
-        self.application.current.player.loadfile(pathtofile)
-        time.sleep(1)
-        self.application.current.player.fullscreen = True
+        self.application.current = Current(item, pyomxplayer.OMXPlayer(pathtofile))
 
     def _pause(self, **kwargs):
         if self.application.current:
-            self.application.current.player.pause()
+            self.application.current.player.toggle_pause()
             if self.application.current.status == "playing":
                 self.application.current.status = "paused"
             else:
@@ -147,7 +142,7 @@ class ajax(BaseHandler):
 
     def _stop(self, **kwargs):
         if self.application.current:
-            self.application.current.player.quit()
+            self.application.current.player.stop()
             self.application.current = None
 
     def _progress(self, **kwargs):
@@ -158,8 +153,8 @@ class ajax(BaseHandler):
 
     def _seek(self, **kwargs):
         if self.application.current:
-            new_pos = float(kwargs["seconds"][0])
-            self.application.current.player.time_pos = new_pos
+            #new_pos = float(kwargs["seconds"][0])
+            #self.application.current.player.time_pos = new_pos
             self.write({
                 "progress": self.application.current.get_timepos(), 
                 "percentage": self.application.current.get_perc(),
@@ -170,15 +165,18 @@ class Current(object):
         self.item = item
         self.player = player
         self.status = "playing"
-        self.length = utils.secondstohumanstamp(player.length)
+        self.length = 200
+        #self.length = utils.secondstohumanstamp(player.length)
 
     def get_timepos(self):
+        return 100
         if self.player.time_pos:
             return utils.secondstohumanstamp(self.player.time_pos)
         else:
             return self.length
 
     def get_perc(self):
+        return 50
         if self.player.time_pos:
             return int(100*self.player.time_pos / self.player.length)
         else:

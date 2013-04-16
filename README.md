@@ -1,5 +1,4 @@
-# Dependencies
-* mplayer.py (https://github.com/baudm/mplayer.py)
-* tornado    (https://github.com/facebook/tornado)
-
+# System Dependencies
+* pyomxplayer (https://github.com/jbaiter/pyomxplayer)
+* tornado     (https://github.com/facebook/tornado)
 
