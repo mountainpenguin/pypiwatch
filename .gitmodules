@@ -1,0 +1,3 @@
+[submodule "modules/pyomxplayer"]
+	path = modules/pyomxplayer
+	url = git@github.com:mountainpenguin/pyomxplayer.git
