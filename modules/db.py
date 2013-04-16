@@ -111,7 +111,7 @@ class Database(object):
                 continue
 
             mtime = os.stat(path).st_mtime
-            length = utils.getLength(fn)
+            length = utils.getLength(path)
             result = utils.parseFilePath(fn)
             if result.isTv:
                 if result.hd and result.hd == "720p":
