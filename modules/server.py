@@ -153,8 +153,10 @@ class ajax(BaseHandler):
 
     def _seek(self, **kwargs):
         if self.application.current:
-            #new_pos = float(kwargs["seconds"][0])
-            #self.application.current.player.time_pos = new_pos
+            new_pos = float(kwargs["seconds"][0])
+            curr_pos = self.application.current._get_position()
+            diff = new_pos - curr_pos
+            self.application.current.player.seek(diff)
             self.write({
                 "progress": self.application.current.get_timepos(), 
                 "percentage": self.application.current.get_perc(),
