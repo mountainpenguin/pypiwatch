@@ -165,7 +165,8 @@ class Current(object):
         self.item = item
         self.player = player
         self.status = "playing"
-        self.length.player = self.length = 200
+        self.length = 200
+        self.player.length = 200
         #self.length = utils.secondstohumanstamp(player.length)
 
     def get_timepos(self):
