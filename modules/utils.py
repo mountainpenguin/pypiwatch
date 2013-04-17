@@ -314,7 +314,7 @@ def identifyPlayable(files, key=""):
         if type(v) is tuple:
             if v[0] == "video/mp4":
                 playable += [(k, key)]
-            elif v[0] == "video/x-matroska":
+            elif v[0] == "video/x-matroska" or (v[0] == "application/octet-stream" and v[1] == "mkv"):
                 playable += [(k, key)]
         elif type(v) is dict:
             s = identifyPlayable(v, key=k)
