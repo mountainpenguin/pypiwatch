@@ -316,6 +316,10 @@ def identifyPlayable(files, key=""):
                 playable += [(k, key)]
             elif v[0] == "video/x-matroska" or (v[0] == "application/octet-stream" and v[1] == "mkv"):
                 playable += [(k, key)]
+            elif v[0] == "video/x-msvideo":
+                playable += [(k, key)]
+            else:
+                print("File type {0} (.{1}) is not playable".format(v[0], v[1]))
         elif type(v) is dict:
             s = identifyPlayable(v, key=k)
             if s:
