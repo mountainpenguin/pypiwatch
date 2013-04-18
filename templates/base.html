@@ -10,8 +10,30 @@
         <link rel="stylesheet" href="/css/{% block css %}main.css{% end %}">
     </head>
     <body>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="brand" href="/">pyPiTV</a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav">
+                            <li{% if page=="home" %} class="active"{% end if %}><a href="/">Home</a></li>
+                            <li{% if page=="tv" %} class="active"{% end if %}><a href="/tv">TV</a></li>
+                            <li{% if page=="films" %} class="active"{% end if %}><a href="/films">Films</a></li>
+                            <li{% if page=="other" %} class="active"{% end if %}><a href="/other">Other</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         {% block body %}
         {% end %}
+
         <script src="/js/jquery-1.9.1.min.js"></script>
         <script src="/js/bootstrap.min.js"></script>
         <script src="/js/bootstrap-slider.js"></script>

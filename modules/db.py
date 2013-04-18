@@ -79,6 +79,19 @@ class Database(object):
                 pass
         return items
 
+    def getItemsByType(self, typeID):
+        query = self.cursor.execute("""
+            SELECT * FROM items
+            WHERE typeID = ?
+        """, (typeID, ))
+        items = []
+        for pot in query.fetchall():
+            try:
+                items.append(Item(raw=pot, root=self.root))
+            except OSError:
+                pass
+        return items
+
     def getItemByPath(self, path):
         query = self.cursor.execute("""
             SELECT * FROM items

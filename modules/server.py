@@ -49,6 +49,9 @@ class Main(object):
             (r"/js/(.*)", tornado.web.StaticFileHandler, {"path": os.path.join(os.getcwd(), "static/js/")}),
             (r"/img/(.*)", tornado.web.StaticFileHandler, {"path": os.path.join(os.getcwd(), "static/img/")}),
             (r"/", webroot),
+            (r"/tv", tv),
+            (r"/films", films),
+            (r"/other", other),
             (r"/ajax", ajax),
         ], **settings)
         self._PID = os.getpid()
@@ -83,10 +86,12 @@ class BaseHandler(tornado.web.RequestHandler):
             return second[1] + "/"
         else:
             return "/"
-    def render(self, page, **kwargs):
+    def render(self, page, templatefile=None, **kwargs):
         kwargs["page"] = page
         kwargs["reldir"] = self._reldir
         kwargs["basename"] = os.path.basename
+        if templatefile:
+            page = templatefile
         t = self.application._templ.load("{0}.html".format(page))
         self.write(t.generate(**kwargs))
 
@@ -97,6 +102,24 @@ class webroot(BaseHandler):
         self.render("index", 
                     current=self.application.current, 
                     items=items_alphabetical) 
+
+class tv(BaseHandler):
+    def get(self):
+        items = self.application._DB.getItemsByType(1)
+        items_alphabetical = utils.itemsAlphabetical(items)
+        self.render("tv", templatefile="index", current=self.application.current, items=items_alphabetical)
+
+class films(BaseHandler):
+    def get(self):
+        items = self.application._DB.getItemsByType(2)
+        items_alphabetical = utils.itemsAlphabetical(items)
+        self.render("films", templatefile="index", current=self.application.current, items=items_alphabetical)
+
+class other(BaseHandler):
+    def get(self):
+        items = self.application._DB.getItemsByType(0)
+        items_alphabetical = utils.itemsAlphabetical(items)
+        self.render("other", templatefile="index", current=self.application.current, items=items_alphabetical)
 
 class ajax(BaseHandler):
     def initialize(self):
