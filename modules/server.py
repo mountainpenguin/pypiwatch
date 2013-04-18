@@ -153,7 +153,7 @@ class ajax(BaseHandler):
         item = self.application._DB.getItemByID(itemID)
         pathtofile = os.path.join(self.application._root, item.playable[itemindex])
 
-        self.application.current = Current(item, pyomxplayer.OMXPlayer(pathtofile))
+        self.application.current = Current(item, pyomxplayer.OMXPlayer(utils.shellquote(pathtofile)))
 
     def _pause(self, **kwargs):
         if self.application.current:

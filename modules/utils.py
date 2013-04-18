@@ -374,3 +374,6 @@ def getLength(path):
         else:
             return length
     return -1
+
+def shellquote(s):
+    return "'" + s.replace("'", "'\\''") + "'"
