@@ -107,6 +107,7 @@ class ajax(BaseHandler):
             "stop": self._stop,
             "progress": self._progress,
             "seek": self._seek,
+            "subtitles": self._sub,
         }
 
     def get(self):
@@ -159,6 +160,10 @@ class ajax(BaseHandler):
                 "progress": self.application.current.get_timepos(), 
                 "percentage": self.application.current.get_perc(),
             })
+
+    def _sub(self, **kwargs):
+        if self.application.current:
+            self.application.current.player.toggle_subtitles()
 
 class Current(object):
     def __init__(self, item, player):

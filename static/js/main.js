@@ -68,6 +68,17 @@ $(document).ready(function(){
                          .on("slide", slideUpdate)
                          .on("slideStop", slideStop); 
 
+    $("#toggle-subtitles").click( function (evt) {
+        $.ajax({
+            url: "/ajax",
+            data: {
+                command: "subtitles"
+            },
+            success: function (data) {
+            }
+        });
+    });
+
     progressFunc();
     window.setInterval(progressFunc, 2000);
 });
